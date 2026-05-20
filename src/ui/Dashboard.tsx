@@ -2,20 +2,16 @@ import { useGameStore } from "../store/gameStore";
 import { formatDate } from "../engine/state";
 import { canFastForward } from "../engine/turn";
 import { Meters } from "./Meters";
-import { Inbox } from "./Inbox";
+import { PendingFolder } from "./PendingFolder";
 import { LawCard } from "./LawCard";
 import { PMNominationModal } from "./PMNominationModal";
 import { Log } from "./Log";
 
 export function Dashboard() {
   const state = useGameStore((s) => s.state)!;
+  const selectedLawId = useGameStore((s) => s.selectedLawId);
   const advance = useGameStore((s) => s.advance);
   const reset = useGameStore((s) => s.resetGame);
-
-  const visibleInbox = state.inbox.filter(
-    (p) => !p.cooldownDays || p.cooldownDays === 0,
-  );
-  const activeLaw = visibleInbox[0]; // single-decision focus
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -45,26 +41,7 @@ export function Dashboard() {
       {/* Body */}
       <main className="flex-1 grid grid-cols-1 lg:grid-cols-[260px_1fr_280px] gap-6 px-6 md:px-10 py-8">
         <Meters />
-
-        <section className="space-y-6">
-          {activeLaw ? (
-            <LawCard pending={activeLaw} />
-          ) : (
-            <div className="doc p-10 text-center">
-              <h2 className="text-2xl text-ink mb-2">
-                No urgent dossiers on your desk.
-              </h2>
-              <p className="text-ink/70">
-                {state.government?.confirmed
-                  ? "The country runs on. Parliament will surely send something soon."
-                  : "First you must form a government."}
-              </p>
-            </div>
-          )}
-
-          <Inbox />
-        </section>
-
+        <PendingFolder />
         <Log />
       </main>
 
@@ -76,7 +53,9 @@ export function Dashboard() {
             onClick={() => advance(1)}
             disabled={!!state.pmNomination}
             title={
-              state.pmNomination ? "Form a government first." : "Advance one day."
+              state.pmNomination
+                ? "Form a government first."
+                : "Advance one day. Pending dossiers tick down."
             }
           >
             Advance 1 day
@@ -87,8 +66,8 @@ export function Dashboard() {
             disabled={!canFastForward(state)}
             title={
               canFastForward(state)
-                ? "Fast-forward 7 days."
-                : "Resolve open matters first."
+                ? "Fast-forward 7 days. Only available when your desk is clear."
+                : "Clear your desk first to fast-forward."
             }
           >
             Skip a week
@@ -104,6 +83,7 @@ export function Dashboard() {
         </button>
       </footer>
 
+      {selectedLawId && <LawCard />}
       {state.pmNomination && <PMNominationModal />}
     </div>
   );
