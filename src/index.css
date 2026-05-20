@@ -1,0 +1,36 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html, body, #root {
+    height: 100%;
+  }
+  body {
+    @apply bg-navy text-parchment font-sans antialiased;
+    background-image:
+      radial-gradient(1200px 600px at 20% -10%, rgba(184,144,70,0.10), transparent 60%),
+      radial-gradient(900px 500px at 110% 110%, rgba(184,144,70,0.06), transparent 60%);
+  }
+  h1, h2, h3 {
+    @apply font-serif tracking-wide;
+  }
+}
+
+@layer components {
+  .doc {
+    @apply bg-parchment text-ink rounded-sm shadow-2xl border border-gold/40;
+  }
+  .btn {
+    @apply px-4 py-2 rounded-sm border text-sm font-medium transition;
+  }
+  .btn-primary {
+    @apply btn bg-navy text-parchment border-gold/60 hover:bg-navy-light;
+  }
+  .btn-ghost {
+    @apply btn bg-transparent border-ink/30 text-ink hover:bg-ink/5;
+  }
+  .btn-danger {
+    @apply btn bg-crimson text-parchment border-crimson hover:opacity-90;
+  }
+}
